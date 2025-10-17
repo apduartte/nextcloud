@@ -1,0 +1,11 @@
+nextcloud-aws-terraform/
+core/
+main.tf
+variables.tf
+outputs.tf
+runtime/
+main.tf
+variables.tf
+outputs.tf
+Makefile
+README.md
