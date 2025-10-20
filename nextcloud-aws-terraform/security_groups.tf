@@ -1,5 +1,5 @@
-
-resource "aws_security_group" "alb" {
+# Security Group para o Load Balancer (ALB)
+resource "aws_security_group" "alb_sg" {
   name        = "nextcloud-alb-sg"
   description = "Permite HTTP/HTTPS"
   vpc_id      = module.vpc.vpc_id
@@ -28,7 +28,8 @@ resource "aws_security_group" "alb" {
   tags = merge(var.tags, { Name = "nextcloud-alb-sg" })
 }
 
-resource "aws_security_group" "ec2" {
+# Security Group para instâncias EC2
+resource "aws_security_group" "ec2_sg" {
   name        = "nextcloud-ec2-sg"
   description = "Permite HTTP do ALB e NFS + saída geral"
   vpc_id      = module.vpc.vpc_id
@@ -37,7 +38,7 @@ resource "aws_security_group" "ec2" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   ingress {
@@ -57,16 +58,25 @@ resource "aws_security_group" "ec2" {
   tags = merge(var.tags, { Name = "nextcloud-ec2-sg" })
 }
 
-resource "aws_security_group" "rds" {
-  name        = "nextcloud-rds-sg"
-  description = "Permite PostgreSQL apenas da EC2"
-  vpc_id      = module.vpc.vpc_id
+# Subnet Group para o banco de dados RDS
+resource "aws_db_subnet_group" "nc_db_subnet_group" {
+  name       = "nc-db-subnets"
+  subnet_ids = var.private_subnet_ids
+
+  tags = var.tags
+}
+
+# Security Group para o RDS
+resource "aws_security_group" "rds_sg" {
+  name        = "nc-rds-sg"
+  description = "Permite acesso ao PostgreSQL (porta 5432) a partir da aplicação"
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.ec2.id]
+    security_groups = [aws_security_group.ec2_sg.id]
   }
 
   egress {
@@ -76,5 +86,8 @@ resource "aws_security_group" "rds" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = merge(var.tags, { Name = "nextcloud-rds-sg" })
+  tags = merge(var.tags, {
+    Name   = "nc-rds-sg"
+    Backup = "true"
+  })
 }
