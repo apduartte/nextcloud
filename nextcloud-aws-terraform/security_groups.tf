@@ -58,14 +58,6 @@ resource "aws_security_group" "ec2_sg" {
   tags = merge(var.tags, { Name = "nextcloud-ec2-sg" })
 }
 
-# Subnet Group para o banco de dados RDS
-resource "aws_db_subnet_group" "nc_db_subnet_group" {
-  name       = "nc-db-subnets"
-  subnet_ids = var.private_subnet_ids
-
-  tags = var.tags
-}
-
 # Security Group para o RDS
 resource "aws_security_group" "rds_sg" {
   name        = "nc-rds-sg"
