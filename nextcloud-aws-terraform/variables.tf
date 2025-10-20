@@ -1,80 +1,80 @@
 
-resource "aws_security_group" "alb" {
-  name        = "nextcloud-alb-sg"
-  description = "Permite HTTP/HTTPS"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge(var.tags, { Name = "nextcloud-alb-sg" })
+variable "aws_region" {
+  type    = string
+  default = "us-east-1"
 }
 
-resource "aws_security_group" "ec2" {
-  name        = "nextcloud-ec2-sg"
-  description = "Permite HTTP do ALB e NFS + saída geral"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
-  }
-
-  ingress {
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge(var.tags, { Name = "nextcloud-ec2-sg" })
+variable "vpc_cidr" {
+  type    = string
+  default = "10.0.0.0/16"
 }
 
-resource "aws_security_group" "rds" {
-  name        = "nextcloud-rds-sg"
-  description = "Permite PostgreSQL apenas da EC2"
-  vpc_id      = module.vpc.vpc_id
+variable "azs" {
+  type    = list(string)
+  default = ["us-east-1a", "us-east-1b"]
+}
 
-  ingress {
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [aws_security_group.ec2.id]
+variable "instance_type" {
+  type    = string
+  default = "t3.micro"
+}
+
+variable "desired_capacity" {
+  type    = number
+  default = 1
+}
+
+variable "min_size" {
+  type    = number
+  default = 1
+}
+
+variable "max_size" {
+  type    = number
+  default = 2
+}
+
+variable "db_name" {
+  type    = string
+  default = "nextcloud"
+}
+
+variable "db_username" {
+  type    = string
+  default = "nextcloud"
+}
+
+variable "db_password" {
+  type      = string
+  sensitive = true
+  default   = "NextcloudDB2024!Secure"
+}
+
+variable "db_instance_class" {
+  type    = string
+  default = "db.t3.micro"
+}
+
+variable "db_allocated_gb" {
+  type    = number
+  default = 20
+}
+
+variable "db_engine_version" {
+  type    = string
+  default = "15.5"
+}
+
+variable "app_fqdn" {
+  description = "FQDN do Nextcloud"
+  type        = string
+  default     = "nextcloud.apduartte.com.br"
+}
+
+variable "tags" {
+  type = map(string)
+  default = {
+    Project = "Nextcloud-IaC"
+    Owner   = "AnaPaulaDuarte"
   }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge(var.tags, { Name = "nextcloud-rds-sg" })
 }
