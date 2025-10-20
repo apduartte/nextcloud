@@ -64,7 +64,10 @@ resource "aws_autoscaling_group" "nextcloud" {
   health_check_type         = "EC2"
   health_check_grace_period = 300
 
-  launch_template { id = aws_launch_template.nextcloud.id, version = "$Latest" }
+    launch_template {
+    id      = aws_launch_template.nextcloud.id
+    version = "$Latest"
+  }
 
   target_group_arns = module.alb.target_group_arns
 
