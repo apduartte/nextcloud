@@ -280,6 +280,18 @@ resource "aws_backup_selection" "by_tag" {
     key   = "Backup"
     value = "true"
   }
+  resource "null_resource" "destroy_guard" {
+    count = var.enable_destroy ? 0 : 1
+
+    lifecycle {
+      prevent_destroy = true
+    }
+
+    provisioner "local-exec" {
+      command = "echo 'Destruição bloqueada. Altere enable_destroy para true se tiver certeza.'"
+    }
+  }
+
 }
 
 # (Opcional) Caso o data acima falhe porque o role não existe, crie:
@@ -305,3 +317,4 @@ resource "aws_backup_selection" "by_tag" {
 #     }
 #   }
 # }
+
