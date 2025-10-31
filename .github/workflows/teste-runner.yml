@@ -1,0 +1,14 @@
+name: Teste Runner Self-hosted
+on:
+  workflow_dispatch: {}
+
+jobs:
+  hello:
+    runs-on: [self-hosted, Linux, X64,ubuntu]   # use os labels do seu runner
+    steps:
+      - uses: actions/checkout@v4
+      - name: Info
+        run: |
+          echo "Runner: $RUNNER_NAME"
+          echo "OS: $RUNNER_OS"
+          uname -a
