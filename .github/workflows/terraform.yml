@@ -21,3 +21,4 @@ jobs:
           role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
           role-session-name: gha-terraform
           aws-region: sa-east-1      # ajuste para sua região
+          
