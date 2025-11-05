@@ -2,7 +2,7 @@ name: Terraformar
 
 on:
   push:
-    branches: [ main ]         # ou as que você permitir na trust policy
+    branches: [ main ]         # ajuste se quiser permitir outras branches
   workflow_dispatch:
 
 permissions:
@@ -12,8 +12,10 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout do código
+        uses: actions/checkout@v4
 
       - name: Configurar credenciais da AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -22,4 +24,18 @@ jobs:
           role-session-name: gha-terraform
           aws-region: us-east-1
 
-      # (seus passos de terraform init/plan/apply)
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.7
+
+      - name: Terraform Init
+        run: terraform -chdir=infra init -input=false
+
+      - name: Terraform Plan
+        run: terraform -chdir=infra plan -input=false
+
+      # Opcional — aplicar apenas em push ou manual
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+        run: terraform -chdir=infra apply -auto-approve -input=false
