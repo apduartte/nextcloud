@@ -2,11 +2,11 @@ name: Terraformar
 
 on:
   push:
-    branches: [ main ]         # ou a sua branch
+    branches: [ main ]         # ou as que você permitir na trust policy
   workflow_dispatch:
 
 permissions:
-  id-token: write              # OBRIGATÓRIO p/ OIDC 
+  id-token: write              # OBRIGATÓRIO p/ OIDC
   contents: read
 
 jobs:
@@ -20,4 +20,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
           role-session-name: gha-terraform
-          aws-region: sa-east-1      # ajuste para sua região
+          aws-region: us-east-1
+
+      # (seus passos de terraform init/plan/apply)
