@@ -1,53 +1,23 @@
-name: Terraform
+name: Terraformar
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]         # ou a sua branch
+  workflow_dispatch:
 
 permissions:
-  id-token: write
+  id-token: write              # OBRIGATÓRIO p/ OIDC
   contents: read
 
-env:
-  AWS_REGION: us-east-1
-  TF_WORKING_DIR: .
-
 jobs:
-  apply:
+  terraform:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.7
-
-      - name: Configure AWS credentials (OIDC)
+      - name: Configurar credenciais da AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform init
-        run: terraform -chdir=${{ env.TF_WORKING_DIR }} init
-
-      - name: Terraform fmt
-        run: terraform fmt -check
-
-      - name: Terraform validate
-        run: terraform -chdir=${{ env.TF_WORKING_DIR }} validate -no-color
-
-      # Plano especulativo só em PRs (opcional)
-      - name: Terraform plan
-        if: github.event_name == 'pull_request'
-        run: terraform -chdir=${{ env.TF_WORKING_DIR }} plan -no-color
-
-      # Apply só em push na main (ajuste a branch se quiser)
-      - name: Terraform apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform -chdir=${{ env.TF_WORKING_DIR }} apply -auto-approve -input=false
-
+          role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
+          role-session-name: gha-terraform
+          aws-region: sa-east-1      # ajuste para sua região
