@@ -2,11 +2,11 @@ name: Terraformar
 
 on:
   push:
-    branches: [ main ]         # ajuste se quiser permitir outras branches
+    branches: [ main ]           # ajuste se quiser outras
   workflow_dispatch:
 
 permissions:
-  id-token: write              # OBRIGATÓRIO p/ OIDC
+  id-token: write                # OBRIGATÓRIO p/ OIDC
   contents: read
 
 jobs:
@@ -14,28 +14,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
-      - name: Configurar credenciais da AWS (OIDC)
+      # (passo de debug temporário)
+      - name: Debug ref
+        run: |
+          echo "repo=${{ github.repository }}"   # deve ser apduartte/nextcloud
+          echo "ref=${{ github.ref }}"           # ex.: refs/heads/main
+          echo "event=${{ github.event_name }}"  # push / workflow_dispatch
+
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
           role-session-name: gha-terraform
           aws-region: us-east-1
 
-      - name: Instalar Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.7
 
-      - name: Terraform Init
+      - name: Terraform init
         run: terraform -chdir=infra init -input=false
 
-      - name: Terraform Plan
+      - name: Terraform plan
         run: terraform -chdir=infra plan -input=false
 
-      # Opcional — aplicar apenas em push ou manual
-      - name: Terraform Apply
+      # Aplique só manualmente na main (evita apply acidental)
+      - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
         run: terraform -chdir=infra apply -auto-approve -input=false
