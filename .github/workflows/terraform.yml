@@ -2,29 +2,33 @@ name: Terraformar
 
 on:
   push:
-    branches: [ main ]           # ajuste se quiser outras
-  workflow_dispatch:
+    branches: [ main ]          # ajuste se quiser outras branches
+  workflow_dispatch:            # permite rodar manualmente
 
 permissions:
-  id-token: write                # OBRIGATÓRIO p/ OIDC
+  id-token: write               # OIDC OBRIGATÓRIO
   contents: read
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    env:
+      TF_IN_AUTOMATION: "true"
+      AWS_REGION: us-east-1
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: false
+          fetch-depth: 0
 
-      # (passo de debug temporário)
+      # (opcional) debug para conferir evento/ref
       - name: Debug ref
         run: |
-          echo "repo=${{ github.repository }}"   # deve ser apduartte/nextcloud
-          echo "ref=${{ github.ref }}"           # ex.: refs/heads/main
-          echo "event=${{ github.event_name }}"  # push / workflow_dispatch
+          echo "repo=${{ github.repository }}"
+          echo "ref=${{ github.ref }}"
+          echo "event=${{ github.event_name }}"
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -32,19 +36,42 @@ jobs:
           role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
           role-session-name: gha-terraform
           aws-region: us-east-1
+          output-credentials: true
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.7
 
+      # Cache dos plugins do Terraform (acelera init)
+      - name: Cache .terraform providers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+            nextcloud-aws-terraform/.terraform
+          key: ${{ runner.os }}-tf-${{ hashFiles('nextcloud-aws-terraform/**/*.tf') }}
+          restore-keys: |
+            ${{ runner.os }}-tf-
+
+      - name: Terraform fmt (check)
+        working-directory: nextcloud-aws-terraform
+        run: terraform fmt -check -recursive
+
       - name: Terraform init
-        run: terraform -chdir=infra init -input=false
+        working-directory: nextcloud-aws-terraform
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        working-directory: nextcloud-aws-terraform
+        run: terraform validate -no-color
 
       - name: Terraform plan
-        run: terraform -chdir=infra plan -input=false
+        working-directory: nextcloud-aws-terraform
+        run: terraform plan -input=false
 
       # Aplique só manualmente na main (evita apply acidental)
       - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
-        run: terraform -chdir=infra apply -auto-approve -input=false
+        working-directory: nextcloud-aws-terraform
+        run: terraform apply -auto-approve -input=false
