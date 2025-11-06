@@ -78,8 +78,8 @@ variable "tags" {
     Owner   = "AnaPaulaDuarte"
   }
 }
-  variable "enable_destroy" {
-    type    = bool
-    default = false
-    description = "Protege contra destruição acidental"
-  }
+variable "enable_destroy" {
+  type        = bool
+  default     = false
+  description = "Protege contra destruição acidental"
+}

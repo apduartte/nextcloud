@@ -38,12 +38,12 @@ resource "aws_vpc_security_group_egress_rule" "efs_all_out" {
 resource "aws_vpc_security_group_ingress_rule" "efs_nfs_from_app_sg" {
   count = var.app_sg_id != "" ? 1 : 0
 
-  security_group_id              = aws_security_group.efs.id
-  referenced_security_group_id   = var.app_sg_id
-  from_port                      = 2049
-  to_port                        = 2049
-  ip_protocol                    = "tcp"
-  description                    = "NFS from App SG"
+  security_group_id            = aws_security_group.efs.id
+  referenced_security_group_id = var.app_sg_id
+  from_port                    = 2049
+  to_port                      = 2049
+  ip_protocol                  = "tcp"
+  description                  = "NFS from App SG"
 }
 
 # Ingress NFS 2049 a partir do CIDR da VPC (fallback quando não há app SG)
@@ -126,29 +126,29 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_vpc" {
 }
 
 resource "aws_db_instance" "this" {
-  identifier                 = "nc-postgres"
-  engine                     = "postgres"
-  engine_version             = var.db_engine_version         # ex.: "15.7"
-  instance_class             = var.db_instance_class         # ex.: "db.t4g.medium"
-  db_name                    = var.db_name
-  username                   = var.db_username
-  password                   = var.db_password
-  multi_az                   = true
+  identifier     = "nc-postgres"
+  engine         = "postgres"
+  engine_version = var.db_engine_version # ex.: "15.7"
+  instance_class = var.db_instance_class # ex.: "db.t4g.medium"
+  db_name        = var.db_name
+  username       = var.db_username
+  password       = var.db_password
+  multi_az       = true
 
-  allocated_storage          = 50
-  max_allocated_storage      = 200
-  storage_encrypted          = true
-  publicly_accessible        = false
+  allocated_storage     = 50
+  max_allocated_storage = 200
+  storage_encrypted     = true
+  publicly_accessible   = false
 
-  backup_retention_period    = 7
-  backup_window              = "07:00-09:00"
-  maintenance_window         = "Sun:03:00-Sun:04:00"
+  backup_retention_period = 7
+  backup_window           = "07:00-09:00"
+  maintenance_window      = "Sun:03:00-Sun:04:00"
 
-  deletion_protection        = true
-  skip_final_snapshot        = false
+  deletion_protection = true
+  skip_final_snapshot = false
 
-  db_subnet_group_name       = aws_db_subnet_group.this.name
-  vpc_security_group_ids     = [aws_security_group.rds.id]
+  db_subnet_group_name   = aws_db_subnet_group.this.name
+  vpc_security_group_ids = [aws_security_group.rds.id]
 
   tags = merge(var.tags, {
     Name   = "nc-postgres"

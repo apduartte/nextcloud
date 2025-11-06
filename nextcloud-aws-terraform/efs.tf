@@ -4,7 +4,7 @@ resource "aws_efs_file_system" "nextcloud" {
   performance_mode = "generalPurpose"
   throughput_mode  = "elastic"
   encrypted        = true
-  tags = merge(var.tags, { Name = "nextcloud-efs" })
+  tags             = merge(var.tags, { Name = "nextcloud-efs" })
 }
 
 resource "aws_efs_mount_target" "private_1a" {

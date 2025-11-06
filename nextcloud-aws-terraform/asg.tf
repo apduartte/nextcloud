@@ -14,8 +14,8 @@ resource "aws_iam_role" "ec2_ssm" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
       Principal = { Service = "ec2.amazonaws.com" }
     }]
   })
@@ -51,7 +51,7 @@ resource "aws_launch_template" "nextcloud" {
 
   tag_specifications {
     resource_type = "instance"
-    tags = merge(var.tags, { Name = "nextcloud-ec2" })
+    tags          = merge(var.tags, { Name = "nextcloud-ec2" })
   }
 }
 
@@ -64,7 +64,7 @@ resource "aws_autoscaling_group" "nextcloud" {
   health_check_type         = "EC2"
   health_check_grace_period = 300
 
-    launch_template {
+  launch_template {
     id      = aws_launch_template.nextcloud.id
     version = "$Latest"
   }
