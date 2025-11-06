@@ -35,7 +35,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
           role-session-name: gha-terraform
-          aws-region: us-east-1
+          aws-region: us-east-1 
           output-credentials: true
 
       - name: Setup Terraform
