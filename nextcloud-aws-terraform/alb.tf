@@ -9,11 +9,14 @@ module "alb" {
   subnets            = module.vpc.public_subnets
   security_groups    = [aws_security_group.alb.id]
 
-  http_tcp_listeners = [
+  listeners = [
     {
       port               = 80
       protocol           = "HTTP"
+      default_action = {
+      type = "forward"
       target_group_index = 0
+     }
     }
   ]
 
