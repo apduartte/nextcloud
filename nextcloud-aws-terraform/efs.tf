@@ -18,3 +18,4 @@ resource "aws_efs_mount_target" "private_1b" {
   subnet_id       = module.vpc.private_subnets[1]
   security_groups = [aws_security_group.ec2_sg]
 }
+ 
