@@ -3,7 +3,7 @@
 ############################################
 provider "aws" {
   # region padrão do seu ambiente (ex.: us-east-1, us-east-2, sa-east-1, etc.)
-  region = var.region
+  region = "us-east-1"
 }
 
 # Alguns serviços de borda (ACM para CloudFront e WAFv2 + CloudFront) exigem us-east-1
@@ -19,7 +19,7 @@ provider "aws" {
 resource "aws_security_group" "efs" {
   name        = "nc-efs-sg"
   description = "Allow NFS (2049) from app SG or VPC CIDR"
-  vpc_id      = var.vpc_id
+  vpc_id      = "09f6034a906ebab7a"
 
   tags = merge(var.tags, {
     Name   = "nc-efs-sg"
@@ -316,4 +316,39 @@ resource "aws_backup_selection" "by_tag" {
 #     }
 #   }
 # }
+/*
+Note: This is a generated HCL content from the JSON input which is based on the latest API version available.
+To import the resource, please run the following command:
+terraform import azapi_resource. ?api-version=TODO
+
+Or add the below config:
+import {
+  id = "?api-version=TODO"
+  to = azapi_resource.
+}
+*/
+
+resource "azapi_resource" "" {
+  type      = "@TODO"
+  parent_id = "/subscriptions/$${var.subscriptionId}/resourceGroups/$${var.resourceGroupName}"
+  name      = ""
+  body = {
+    Statement = [{
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+        }
+        StringLike = {
+          "token.actions.githubusercontent.com:sub" = "repo:apduartte/nextcloud:ref:refs/heads/main"
+        }
+      }
+      Effect = "Allow"
+      Principal = {
+        Federated = "arn:aws:iam::935194211887:oidc-provider/token.actions.githubusercontent.com"
+      }
+    }]
+    Version = "2012-10-17"
+  }
+}
 
