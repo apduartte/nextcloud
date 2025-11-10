@@ -2,7 +2,7 @@
 # Providers
 ############################################
 provider "aws" {
-   region = "us-east-1"
+  region = "us-east-1"
 }
 
 # Alguns serviços de borda (ACM para CloudFront e WAFv2 + CloudFront) exigem us-east-1
@@ -49,7 +49,7 @@ resource "aws_vpc_security_group_egress_rule" "rds_all_out" {
 }
 # Ingress 5432 a partir do SG do app (se informado)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
-  
+
   security_group_id            = aws_security_group.rds.id
   referenced_security_group_id = var.app_sg_id
   from_port                    = 5432
@@ -60,7 +60,7 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
 
 # Ingress 5432 a partir do CIDR da VPC (fallback)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_vpc" {
-  
+
   security_group_id = aws_security_group.rds.id
   cidr_ipv4         = var.vpc_cidr
   from_port         = 5432

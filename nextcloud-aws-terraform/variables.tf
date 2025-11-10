@@ -88,3 +88,9 @@ variable "apduartte/nextcloud" {
   type        = string
   description = "apduartte/nextcloud"
 }
+
+variable "project_repo" {
+  type        = string
+  default     = "nextcloud" 
+  description = "apduartte/nextcloud"
+}
