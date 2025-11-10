@@ -2,7 +2,7 @@
 # Providers
 ############################################
 provider "aws" {
-  region = "us-east-1"
+   region = "us-east-1"
 }
 
 # Alguns serviços de borda (ACM para CloudFront e WAFv2 + CloudFront) exigem us-east-1
@@ -24,31 +24,6 @@ resource "aws_security_group" "efs" {
     Name   = "nc-efs-sg"
     Backup = "true"
   })
-}
-
-# Egress liberado total (ajuste se quiser sair mais restrito)
-resource "aws_vpc_security_group_ingress_rule" "efs_nfs_from_app" {
-  security_group_id            = aws_security_group.efs_sg.id
-  referenced_security_group_id = aws_security_group.ec2_sg.id
-  ip_protocol                  = "tcp"
-  from_port                    = 2049
-  to_port                      = 2049
-  description                  = "Allow NFS from EC2/App SG to EFS SG"
-}
-
-resource "aws_efs_file_system" "this" {
-  encrypted = true
-
-  tags = merge(var.tags, {
-    Name   = "nc-efs"
-    Backup = "true"
-  })
-}
-resource "aws_efs_mount_target" "mt" {
-  for_each        = toset(module.vpc.private_subnets)
-  file_system_id  = aws_efs_file_system.main.id
-  subnet_id       = each.value
-  security_groups = [aws_security_group.efs_sg.id]
 }
 
 ############################################
@@ -74,7 +49,7 @@ resource "aws_vpc_security_group_egress_rule" "rds_all_out" {
 }
 # Ingress 5432 a partir do SG do app (se informado)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
-
+  
   security_group_id            = aws_security_group.rds.id
   referenced_security_group_id = var.app_sg_id
   from_port                    = 5432
@@ -85,7 +60,7 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
 
 # Ingress 5432 a partir do CIDR da VPC (fallback)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_vpc" {
-
+  
   security_group_id = aws_security_group.rds.id
   cidr_ipv4         = var.vpc_cidr
   from_port         = 5432
