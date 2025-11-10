@@ -55,13 +55,6 @@ resource "aws_efs_mount_target" "mt" {
 ############################################
 # RDS PostgreSQL (Multi-AZ)
 ############################################
-
-resource "aws_db_subnet_group" "this" {
-  name       = "nc-db-subnets"
-  subnet_ids = var.private_subnet_ids
-
-  tags = var.tags
-}
 # Subnet group para RDS
 resource "aws_db_subnet_group" "this" {
   name       = "nc-db-subnets"
