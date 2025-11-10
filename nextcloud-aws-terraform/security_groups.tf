@@ -62,7 +62,9 @@ resource "aws_security_group" "ec2_sg" {
 resource "aws_security_group" "rds_sg" {
   name        = "nc-rds-sg"
   description = "Permite acesso ao PostgreSQL (porta 5432) a partir da aplicação"
-  vpc_id      = var.vpc_id
+  vpc_id = module.vpc.vpc_id   
+}
+
 
   ingress {
     from_port       = 5432

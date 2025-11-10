@@ -1,9 +1,7 @@
 # Subnet Group para o banco de dados RDS
 resource "aws_db_subnet_group" "nc_db_subnet_group" {
-  name       = "nc-db-subnets"
-  subnet_ids = var.private_subnet_ids
-
-  tags = var.tags
+  subnet_ids = module.vpc.private_subnets               # <— troque var.private_subnet_ids
+  # ...
 }
 
 # Instância RDS para o banco PostgreSQL do Nextcloud
