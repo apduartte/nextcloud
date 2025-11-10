@@ -3,7 +3,7 @@
 ############################################
 provider "aws" {
   # region padrão do seu ambiente (ex.: us-east-1, us-east-2, sa-east-1, etc.)
-  region =  "us-east-1"
+  region = "us-east-1"
 }
 
 # Alguns serviços de borda (ACM para CloudFront e WAFv2 + CloudFront) exigem us-east-1
@@ -19,7 +19,7 @@ provider "aws" {
 resource "aws_security_group" "efs" {
   name        = "nc-efs-sg"
   description = "Allow NFS (2049) from app SG or VPC CIDR"
-  vpc_id      ="09f6034a906ebab7a"
+  vpc_id      = "09f6034a906ebab7a"
 
   tags = merge(var.tags, {
     Name   = "nc-efs-sg"
