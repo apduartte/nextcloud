@@ -2,11 +2,11 @@ name: Terraformar
 
 on:
   push:
-    branches: [ main ]          # ajuste se quiser outras branches
-  workflow_dispatch:            # permite rodar manualmente
+    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
-  id-token: write              # OBRIGATÓRIO p/ OIDC 
+  id-token: write
   contents: read
 
 jobs:
@@ -23,8 +23,7 @@ jobs:
           submodules: false
           fetch-depth: 0
 
-      # (opcional) debug para conferir evento/ref
-      - name: Debug ref
+      - name: Debug ref (optional)
         run: |
           echo "repo=${{ github.repository }}"
           echo "ref=${{ github.ref }}"
@@ -35,7 +34,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
           role-session-name: gha-terraform
-          aws-region: us-east-1 
+          aws-region: us-east-1
           output-credentials: true
 
       - name: Setup Terraform
@@ -43,7 +42,6 @@ jobs:
         with:
           terraform_version: 1.9.7
 
-      # Cache dos plugins do Terraform (acelera init)
       - name: Cache .terraform providers
         uses: actions/cache@v4
         with:
@@ -70,7 +68,6 @@ jobs:
         working-directory: nextcloud-aws-terraform
         run: terraform plan -input=false
 
-      # Aplique só manualmente na main (evita apply acidental)
       - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
         working-directory: nextcloud-aws-terraform
