@@ -49,12 +49,12 @@ resource "aws_security_group" "ec2_sg" {
 
 # Ingress 80 somente a partir do SG do ALB
 resource "aws_vpc_security_group_ingress_rule" "ec2_http_from_alb" {
-  security_group_id              = aws_security_group.ec2_sg.id
-  referenced_security_group_id   = aws_security_group.alb_sg.id
-  ip_protocol                    = "tcp"
-  from_port                      = 80
-  to_port                        = 80
-  description                    = "HTTP vindo do ALB"
+  security_group_id            = aws_security_group.ec2_sg.id
+  referenced_security_group_id = aws_security_group.alb_sg.id
+  ip_protocol                  = "tcp"
+  from_port                    = 80
+  to_port                      = 80
+  description                  = "HTTP vindo do ALB"
 }
 
 # Egress geral para a internet (inclui acesso ao RDS/EFS, updates etc.)
@@ -87,12 +87,4 @@ resource "aws_vpc_security_group_ingress_rule" "rds_pg_from_app" {
   from_port                    = 5432
   to_port                      = 5432
   description                  = "PostgreSQL a partir da app (EC2)"
-}
-
-# Egress do RDS (geralmente liberado; ajuste se tiver política restritiva)
-resource "aws_vpc_security_group_egress_rule" "rds_all_out" {
-  security_group_id = aws_security_group.rds_sg.id
-  ip_protocol       = "-1"
-  cidr_ipv4         = "0.0.0.0/0"
-  description       = "Saída liberada"
 }

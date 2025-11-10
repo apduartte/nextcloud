@@ -58,16 +58,16 @@ resource "aws_efs_mount_target" "mt" {
 # Subnet group para RDS
 resource "aws_db_subnet_group" "this" {
   name       = "nc-db-subnets"
-  subnet_ids = module.vpc.private_subnets               # <— troque var.private_subnet_ids
+  subnet_ids = module.vpc.private_subnets # <— troque var.private_subnet_ids
   tags       = var.tags
 }
 
 # SG do RDS (se estiver no main.tf)
 resource "aws_security_group" "rds" {
   name   = "nc-rds-sg"
-  vpc_id = module.vpc.vpc_id                            # <— troque var.vpc_id
-  }
-  
+  vpc_id = module.vpc.vpc_id # <— troque var.vpc_id
+}
+
 resource "aws_vpc_security_group_egress_rule" "rds_all_out" {
   security_group_id = aws_security_group.rds.id
   cidr_ipv4         = "0.0.0.0/0"

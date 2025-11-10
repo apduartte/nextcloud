@@ -35,7 +35,7 @@ resource "aws_launch_template" "nextcloud" {
   name_prefix            = "nextcloud-lt-"
   image_id               = data.aws_ami.al2023.id
   instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.ec2.id]
+  vpc_security_group_ids = [aws_security_group.ec2.ids]
 
   iam_instance_profile { name = aws_iam_instance_profile.ec2_profile.name }
 

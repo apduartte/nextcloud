@@ -1,6 +1,6 @@
 # Subnet Group para o banco de dados RDS
 resource "aws_db_subnet_group" "nc_db_subnet_group" {
-  subnet_ids = module.vpc.private_subnets               # <— troque var.private_subnet_ids
+  subnet_ids = module.vpc.private_subnets # <— troque var.private_subnet_ids
   # ...
 }
 
