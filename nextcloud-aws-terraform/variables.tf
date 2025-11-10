@@ -83,3 +83,8 @@ variable "enable_destroy" {
   default     = false
   description = "Protege contra destruição acidental"
 }
+
+variable "apduartte/nextcloud" {
+  type        = string
+  description = "apduartte/nextcloud"
+}

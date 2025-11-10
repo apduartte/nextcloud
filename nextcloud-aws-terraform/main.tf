@@ -2,7 +2,6 @@
 # Providers
 ############################################
 provider "aws" {
-  # region padrão do seu ambiente (ex.: us-east-1, us-east-2, sa-east-1, etc.)
   region = "us-east-1"
 }
 
@@ -75,7 +74,6 @@ resource "aws_vpc_security_group_egress_rule" "rds_all_out" {
 }
 # Ingress 5432 a partir do SG do app (se informado)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
-  count = var.app_sg_id != "" ? 1 : 0
 
   security_group_id            = aws_security_group.rds.id
   referenced_security_group_id = var.app_sg_id
@@ -87,7 +85,6 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
 
 # Ingress 5432 a partir do CIDR da VPC (fallback)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_vpc" {
-  count = var.app_sg_id == "" ? 1 : 0
 
   security_group_id = aws_security_group.rds.id
   cidr_ipv4         = var.vpc_cidr
