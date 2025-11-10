@@ -266,7 +266,7 @@ resource "aws_backup_plan" "this" {
 
 # Papel padrão do AWS Backup (use data se já existir; senão crie um resource — ver abaixo)
 data "aws_iam_role" "backup" {
-  name = "AWSBackupDefaultServiceRole"
+  name = "AWSBackupDefaultServiceRole" 
 }
 
 resource "aws_backup_selection" "by_tag" {
