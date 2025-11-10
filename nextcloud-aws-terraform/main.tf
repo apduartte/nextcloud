@@ -66,14 +66,13 @@ resource "aws_db_subnet_group" "this" {
 resource "aws_security_group" "rds" {
   name   = "nc-rds-sg"
   vpc_id = module.vpc.vpc_id                            # <— troque var.vpc_id
-  # ... ingress/egress ...
-}
+  }
+  
 resource "aws_vpc_security_group_egress_rule" "rds_all_out" {
   security_group_id = aws_security_group.rds.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
-
 # Ingress 5432 a partir do SG do app (se informado)
 resource "aws_vpc_security_group_ingress_rule" "rds_from_app_sg" {
   count = var.app_sg_id != "" ? 1 : 0
