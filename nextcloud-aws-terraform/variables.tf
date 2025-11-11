@@ -97,6 +97,6 @@ variable "project_repo" {
 variable "nextcloud" {
   type        = string
   default     = "apduartte/nextcloud"
-  description = "Nome do repositório (owner/repo)."
+  description = "https://github.com/apduartte/nextcloud"
 }
 
