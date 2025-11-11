@@ -94,9 +94,4 @@ variable "project_repo" {
   default     = "nextcloud" 
   description = "apduartte/nextcloud"
 }
-variable "nextcloud" {
-  type        = string
-  default     = "apduartte/nextcloud"
-  description = "https://github.com/apduartte/nextcloud"
-}
 
