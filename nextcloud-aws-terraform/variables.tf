@@ -94,3 +94,9 @@ variable "project_repo" {
   default     = "nextcloud" 
   description = "apduartte/nextcloud"
 }
+variable "nextcloud" {
+  type        = string
+  default     = "apduartte/nextcloud"
+  description = "Nome do repositório (owner/repo)."
+}
+
