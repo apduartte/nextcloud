@@ -1,6 +1,5 @@
 
 ## asg_ec2.tf (Launch Template + ASG)
-```hcl
 data "aws_subnet" "private_a" {
   id = module.vpc.private_subnets[0]
 }
