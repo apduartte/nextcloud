@@ -1,4 +1,3 @@
-
 ## user-data.sh (monta EFS e sobe Nextcloud)
 #!/bin/bash
 set -euxo pipefail
