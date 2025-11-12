@@ -1,5 +1,4 @@
 ## efs.tf
-```hcl
 resource "aws_efs_file_system" "this" {
   creation_token  = "${var.project_name}-efs"
   performance_mode = "generalPurpose"
