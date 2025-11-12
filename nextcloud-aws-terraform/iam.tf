@@ -1,5 +1,4 @@
 ## iam.tf (SSM + perfil EC2)
-```hcl
 resource "aws_iam_role" "ec2_role" {
   name = "${var.project_name}-ec2-role"
 
