@@ -1,5 +1,4 @@
 ## security_groups.tf
-```hcl
 resource "aws_security_group" "alb" {
   name        = "${var.project_name}-alb-sg"
   description = "ALB Security Group"
