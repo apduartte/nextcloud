@@ -1,6 +1,5 @@
-############################################################
+
 # EFS – Security Group (compartilhado entre instâncias do ASG)
-############################################################
 resource "aws_security_group" "efs" {
   name        = "nc-efs-sg"
   description = "Allow NFS (2049) from App SG and/or VPC CIDR"
@@ -36,9 +35,7 @@ resource "aws_vpc_security_group_ingress_rule" "efs_from_vpc" {
   description       = "NFS from VPC CIDR (fallback)"
 }
 
-############################################
 # RDS PostgreSQL (Multi-AZ)
-############################################
 resource "aws_db_subnet_group" "this" {
   name       = "nc-db-subnets"
   subnet_ids = module.vpc.private_subnets
@@ -106,17 +103,16 @@ resource "aws_db_instance" "this" {
   })
 }
 
-############################################
 # SNS – tópico para alertas
-############################################
+
 resource "aws_sns_topic" "alerts" {
   name = "nc-alerts"
   tags = var.tags
 }
 
-############################################################
+
 # ACM (us-east-1) com validação DNS em Route53 (para CloudFront)
-############################################################
+
 resource "aws_acm_certificate" "cf" {
   provider          = aws.use1
   domain_name       = var.domain_name
@@ -147,9 +143,7 @@ resource "aws_acm_certificate_validation" "cf" {
   validation_record_fqdns = [for r in aws_route53_record.cert_validation : r.fqdn]
 }
 
-############################################
 # WAFv2 (global / us-east-1) para CloudFront
-############################################
 resource "aws_wafv2_web_acl" "cf" {
   provider = aws.use1
   name     = "nc-cf-waf"
@@ -188,9 +182,7 @@ resource "aws_wafv2_web_acl" "cf" {
   }
 }
 
-############################################################
 # AWS Backup – captura por tag Backup = true (EFS/RDS)
-############################################################
 resource "aws_backup_vault" "this" {
   name = "nc-backup-vault"
   tags = var.tags
