@@ -1,12 +1,16 @@
+variable "project_name" {
+  type    = string
+  default = "nextcloud-efs"
+}
 
-variable "aws_region" {
+variable "region" {
   type    = string
   default = "us-east-1"
 }
 
 variable "vpc_cidr" {
   type    = string
-  default = "10.0.0.0/16"
+  default = "10.10.0.0/16"
 }
 
 variable "azs" {
@@ -14,29 +18,25 @@ variable "azs" {
   default = ["us-east-1a", "us-east-1b"]
 }
 
+variable "public_cidrs" {
+  type    = list(string)
+  default = ["10.10.0.0/24", "10.10.1.0/24"]
+}
+
+variable "private_cidrs" {
+  type    = list(string)
+  default = ["10.10.10.0/24", "10.10.11.0/24"]
+}
+
 variable "instance_type" {
   type    = string
-  default = "t3.micro"
+  default = "t3.small"
 }
 
-variable "desired_capacity" {
-  type    = number
-  default = 1
-}
-
-variable "min_size" {
-  type    = number
-  default = 1
-}
-
-variable "max_size" {
-  type    = number
-  default = 2
-}
-
-variable "db_name" {
+variable "key_name" {
   type    = string
-  default = "nextcloud"
+  default = null
+  description = "Nome opcional da chave SSH para acesso EC2."
 }
 
 variable "db_username" {
@@ -47,51 +47,32 @@ variable "db_username" {
 variable "db_password" {
   type      = string
   sensitive = true
-  default   = "NextcloudDB2024!Secure"
 }
 
-variable "db_instance_class" {
+variable "db_name" {
   type    = string
-  default = "db.t3.micro"
+  default = "nextcloud"
 }
 
-variable "db_allocated_gb" {
+variable "db_allocated_storage" {
   type    = number
   default = 20
 }
 
-variable "db_engine_version" {
+variable "trusted_domains" {
   type    = string
-  default = "15.5"
+  default = "nextcloud.example.com"
+  description = "Domínio confiável para acesso ao Nextcloud."
 }
 
-variable "app_fqdn" {
-  description = "FQDN do Nextcloud"
-  type        = string
-  default     = "nextcloud.apduartte.com.br"
+variable "enable_https" {
+  type    = bool
+  default = false
+  description = "Se verdadeiro, configura HTTPS no ALB com ACM."
 }
 
-variable "tags" {
-  type = map(string)
-  default = {
-    Project = "Nextcloud-IaC"
-    Owner   = "AnaPaulaDuarte"
-  }
+variable "acm_certificate_arn" {
+  type    = string
+  default = null
+  description = "ARN do certificado ACM para HTTPS."
 }
-variable "enable_destroy" {
-  type        = bool
-  default     = false
-  description = "Protege contra destruição acidental"
-}
-
-variable "nextcloud" {
-  type        = string
-  description = "apduartte/nextcloud"
-}
-
-variable "project_repo" {
-  type        = string
-  default     = "nextcloud" 
-  description = "apduartte/nextcloud"
-}
-
