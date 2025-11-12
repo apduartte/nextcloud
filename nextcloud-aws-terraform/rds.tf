@@ -1,5 +1,4 @@
 ## rds.tf (PostgreSQL)
-```hcl
 resource "aws_db_subnet_group" "this" {
   name       = "${var.project_name}-db-subnets"
   subnet_ids = module.vpc.private_subnets
