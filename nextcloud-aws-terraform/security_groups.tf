@@ -1,21 +1,27 @@
-# SG do ALB
-resource "aws_security_group" "alb_sg" {
-  name        = "nextcloud-alb-sg"
-  description = "Permite HTTP/HTTPS"
+## security_groups.tf
+```hcl
+resource "aws_security_group" "alb" {
+  name        = "${var.project_name}-alb-sg"
+  description = "ALB Security Group"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
+    description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = var.enable_https ? [1] : []
+    content {
+      description = "HTTPS"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   }
 
   egress {
@@ -24,21 +30,19 @@ resource "aws_security_group" "alb_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = merge(var.tags, { Name = "nextcloud-alb-sg" })
 }
 
-# SG da aplicação (EC2)
-resource "aws_security_group" "ec2_sg" {
-  name        = "nextcloud-ec2-sg"
-  description = "Permite HTTP do ALB e NFS + saída geral"
+resource "aws_security_group" "ec2" {
+  name        = "${var.project_name}-ec2-sg"
+  description = "EC2 Security Group"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
+    description     = "From ALB"
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb_sg.id]
+    security_groups = [aws_security_group.alb.id]
   }
 
   egress {
@@ -47,47 +51,18 @@ resource "aws_security_group" "ec2_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = merge(var.tags, { Name = "nextcloud-ec2-sg" })
 }
 
-# SG do EFS
-resource "aws_security_group" "efs_sg" {
-  name        = "nextcloud-efs-sg"
-  description = "Security Group for EFS"
-  vpc_id      = module.vpc.vpc_id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge(var.tags, { Name = "nextcloud-efs-sg" })
-}
-
-# Regra *separada* de NFS (sem ingress/egress/tags aqui!)
-resource "aws_vpc_security_group_ingress_rule" "efs_nfs_from_app" {
-  security_group_id            = aws_security_group.efs_sg.id
-  referenced_security_group_id = aws_security_group.ec2_sg.id
-  ip_protocol                  = "tcp"
-  from_port                    = 2049
-  to_port                      = 2049
-  description                  = "Allow NFS from EC2 SG to EFS SG"
-}
-
-# SG do RDS
-resource "aws_security_group" "rds_sg" {
-  name        = "nc-rds-sg"
-  description = "Permite acesso ao PostgreSQL (5432) a partir da aplicação"
-  vpc_id      = module.vpc.vpc_id
+resource "aws_security_group" "rds" {
+  name   = "${var.project_name}-rds-sg"
+  vpc_id = module.vpc.vpc_id
 
   ingress {
+    description     = "PostgreSQL from EC2"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.ec2_sg.id]
+    security_groups = [aws_security_group.ec2.id]
   }
 
   egress {
@@ -96,8 +71,24 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = merge(var.tags, { Name = "nc-rds-sg", Backup = "true" })
 }
- 
 
+resource "aws_security_group" "efs" {
+  name   = "${var.project_name}-efs-sg"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    description     = "NFS from EC2"
+    from_port       = 2049
+    to_port         = 2049
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
