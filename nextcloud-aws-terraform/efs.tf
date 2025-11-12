@@ -1,6 +1,6 @@
 ## efs.tf
 resource "aws_efs_file_system" "this" {
-  creation_token  = "${var.project_name}-efs"
+  creation_token   = "${var.project_name}-efs"
   performance_mode = "generalPurpose"
   throughput_mode  = "bursting"
 

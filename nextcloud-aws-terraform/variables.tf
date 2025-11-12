@@ -34,8 +34,8 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  type    = string
-  default = null
+  type        = string
+  default     = null
   description = "Nome opcional da chave SSH para acesso EC2."
 }
 
@@ -60,19 +60,19 @@ variable "db_allocated_storage" {
 }
 
 variable "trusted_domains" {
-  type    = string
-  default = "nextcloud.example.com"
+  type        = string
+  default     = "nextcloud.example.com"
   description = "Domínio confiável para acesso ao Nextcloud."
 }
 
 variable "enable_https" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Se verdadeiro, configura HTTPS no ALB com ACM."
 }
 
 variable "acm_certificate_arn" {
-  type    = string
-  default = null
+  type        = string
+  default     = null
   description = "ARN do certificado ACM para HTTPS."
 }
