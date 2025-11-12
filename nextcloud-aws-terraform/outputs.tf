@@ -1,20 +1,14 @@
+## outputs.tf
+```hcl
+output "alb_dns_name" {
+  value = aws_lb.this.dns_name
+}
 
-output "alb_dns" {
-  value       = module.alb.lb_dns_name
-  description = "DNS público do ALB"
+output "db_endpoint" {
+  value = aws_db_instance.this.address
 }
 
 output "efs_id" {
-  value       = aws_efs_file_system.nextcloud.id
-  description = "ID do EFS"
+  value = aws_efs_file_system.this.id
 }
-
-output "rds_endpoint" {
-  value       = aws_db_instance.this.address
-  description = "Endpoint do banco PostgreSQL"
-}
-
-output "asg_name" {
-  value       = aws_autoscaling_group.nextcloud.name
-  description = "Nome do ASG"
-}
+```
