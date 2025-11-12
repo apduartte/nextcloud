@@ -21,5 +21,4 @@ resource "aws_db_instance" "this" {
   deletion_protection     = false
   backup_retention_period = 1
 }
-```
 

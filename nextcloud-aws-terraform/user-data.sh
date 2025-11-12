@@ -1,6 +1,5 @@
 
 ## user-data.sh (monta EFS e sobe Nextcloud)
-```bash
 #!/bin/bash
 set -euxo pipefail
 
@@ -49,5 +48,5 @@ TRUSTED_DOMAINS="${trusted_domains}"
   nextcloud:stable-apache
 
 # Health endpoint: status.php fica em /status.php após instalação
-```
+
 
