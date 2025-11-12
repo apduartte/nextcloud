@@ -1,4 +1,3 @@
-
 ## asg_ec2.tf (Launch Template + ASG)
 data "aws_subnet" "private_a" {
   id = module.vpc.private_subnets[0]
@@ -78,4 +77,3 @@ resource "aws_autoscaling_group" "this" {
     propagate_at_launch = true
   }
 }
-```
