@@ -1,16 +1,23 @@
 # Terraform - não versionar artefatos
-**/.terraform/*
-.terraform/
+# Terraform
+# Estado do Terraform
 *.tfstate
 *.tfstate.*
+
+# Pasta interna do Terraform
+.terraform/
+
+# Arquivos de lock e crash
 crash.log
-*.tfvars
-*.tfvars.json
+*.tfvars.backup
+.terraform.lock.hcl
+
+# Overrides locais
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Providers/ZIPs locais
-**/terraform-provider-*/**
-terraform_*.zip
+# Variáveis sensíveis
+terraform.tfvars
+*.tfvars
