@@ -25,3 +25,6 @@ terraform.tfvars
 
 terraform.tfvars
 *.auto.tfvars
+terraform.tfvars
+*.auto.tfvars
+terraform.tfvars.tf
