@@ -25,3 +25,5 @@ terraform.tfvars
 # Arquivos de configuração do editor
 
 
+terraform.tfvars
+*.auto.tfvars
