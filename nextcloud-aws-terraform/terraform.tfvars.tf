@@ -22,7 +22,7 @@ key_name = "SUA_KEYPAIR_AQUI" # ou null se não for acessar via SSH
 
 # Banco de Dados RDS PostgreSQL
 db_username          = "nextcloud"
-db_password          = "SenhaForte123!"  # NÃO commitar isso no Git
+db_password          = "SenhaForte123!" # NÃO commitar isso no Git
 db_name              = "nextcloud"
 db_allocated_storage = 20
 
@@ -32,5 +32,5 @@ trusted_domains = "nextcloud.seu-dominio.com.br"
 
 # HTTPS no ALB (integração com ACM)
 # Para primeiro teste, pode deixar falso e usar HTTP.
-enable_https       = false
+enable_https        = false
 acm_certificate_arn = null
