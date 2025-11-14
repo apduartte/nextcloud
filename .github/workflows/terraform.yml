@@ -15,6 +15,9 @@ jobs:
     env:
       TF_IN_AUTOMATION: "true"
       AWS_REGION: us-east-1
+    defaults:
+      run:
+        working-directory: nextcloud-aws-terraform
 
     steps:
       - name: Checkout code
@@ -75,5 +78,6 @@ jobs:
 
       - env:
         tf_plugin_cache_dir: ~/.terraform.d/plugin-cache
+
 
 
