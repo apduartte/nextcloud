@@ -22,6 +22,4 @@ override.tf.json
 terraform.tfvars
 *.tfvars
 
-# Arquivos de configuração do editor
-
 
