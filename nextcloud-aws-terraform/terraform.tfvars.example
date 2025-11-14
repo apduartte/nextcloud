@@ -34,4 +34,3 @@ trusted_domains = "nextcloud.seu-dominio.com.br"
 # Para primeiro teste, pode deixar falso e usar HTTP.
 enable_https        = false
 acm_certificate_arn = null
-
