@@ -72,3 +72,8 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
         working-directory: nextcloud-aws-terraform
         run: terraform apply -auto-approve -input=false
+
+      - env:
+        tf_plugin_cache_dir: ~/.terraform.d/plugin-cache
+
+
