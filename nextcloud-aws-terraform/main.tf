@@ -1,4 +1,7 @@
-# EFS – Security Group (compartilhado entre instâncias do ASG)
+############################################
+# EFS (compartilhado entre instâncias do ASG)
+############################################
+
 resource "aws_security_group" "efs" {
   name        = "nc-efs-sg"
   description = "Allow NFS (2049) from App SG and/or VPC CIDR"
