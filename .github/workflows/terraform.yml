@@ -3,8 +3,6 @@ name: Terraformar
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +15,8 @@ jobs:
     env:
       TF_IN_AUTOMATION: "true"
       AWS_REGION: us-east-1
+      TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
+
     defaults:
       run:
         working-directory: nextcloud-aws-terraform
@@ -58,31 +58,17 @@ jobs:
             ${{ runner.os }}-tf-
 
       - name: Terraform fmt (check)
-        working-directory: nextcloud-aws-terraform
         run: terraform fmt -check -recursive
 
       - name: Terraform init
-        working-directory: nextcloud-aws-terraform
         run: terraform init -input=false
 
       - name: Terraform validate
-        working-directory: nextcloud-aws-terraform
         run: terraform validate -no-color
 
       - name: Terraform plan
-        working-directory: nextcloud-aws-terraform
         run: terraform plan -input=false
 
       - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
-        working-directory: nextcloud-aws-terraform
         run: terraform apply -auto-approve -input=false
-
-      - env:
-        tf_plugin_cache_dir: ~/.terraform.d/plugin-cache
-
-        
-
-
-
-
