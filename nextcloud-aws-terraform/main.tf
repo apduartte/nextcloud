@@ -2,23 +2,6 @@
 # EFS (compartilhado entre instâncias do ASG)
 ############################################
 
-resource "aws_security_group" "efs" {
-  name        = "nc-efs-sg"
-  description = "Allow NFS (2049) from App SG and/or VPC CIDR"
-  vpc_id      = module.vpc.vpc_id
-
-  tags = merge(var.tags, {
-    Name   = "nc-efs-sg"
-    Backup = "true"
-  })
-}
-
-resource "aws_vpc_security_group_egress_rule" "efs_all_out" {
-  security_group_id = aws_security_group.efs.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1"
-}
-
 resource "aws_vpc_security_group_ingress_rule" "efs_from_app_sg" {
   security_group_id            = aws_security_group.efs.id
   referenced_security_group_id = var.app_sg_id
