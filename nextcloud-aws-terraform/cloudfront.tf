@@ -1,18 +1,98 @@
-## vpc.tf (módulo oficial VPC)
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
+############################################
+# CloudFront - CDN em frente ao ALB
+############################################
 
-  name = "${var.project_name}-vpc"
-  cidr = var.vpc_cidr
-
-  azs             = var.azs
-  public_subnets  = var.public_cidrs
-  private_subnets = var.private_cidrs
-
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+# Flag auxiliar para habilitar/desabilitar a CDN
+locals {
+  cloudfront_enabled = var.enable_cloudfront
 }
 
+resource "aws_cloudfront_distribution" "this" {
+  count = local.cloudfront_enabled ? 1 : 0
+
+  enabled         = true
+  is_ipv6_enabled = true
+
+  comment             = "CDN para Nextcloud - ${var.project_name}"
+  default_root_object = "index.php"
+
+  # Domínio customizado (opcional)
+  aliases = var.domain_name != "" ? [var.domain_name] : []
+
+  ##########################################
+  # Origem: ALB do Nextcloud
+  ##########################################
+  origin {
+    domain_name = aws_lb.this.dns_name # ALB como origem
+    origin_id   = "nextcloud-alb-origin"
+
+    custom_origin_config {
+      http_port  = 80
+      https_port = 443
+
+      # 🔒 Importante:
+      # Para usar "https-only" aqui, o ALB precisa ter listener HTTPS habilitado
+      # (var.enable_https = true e var.acm_certificate_arn válido)
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  ##########################################
+  # Comportamento padrão de cache
+  ##########################################
+  default_cache_behavior {
+    target_origin_id       = "nextcloud-alb-origin"
+    viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods = [
+      "GET", "HEAD", "OPTIONS",
+      "PUT", "POST", "PATCH", "DELETE"
+    ]
+
+    cached_methods = [
+      "GET", "HEAD"
+    ]
+
+    compress = true
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "all"
+      }
+    }
+  }
+
+  ##########################################
+  # Classe de preço / Região
+  ##########################################
+  price_class = "PriceClass_100" # edge locations mais comuns (custo menor)
+
+  ##########################################
+  # Restrições geográficas (opcional)
+  ##########################################
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  ##########################################
+  # Certificado HTTPS para o CloudFront
+  ##########################################
+  viewer_certificate {
+    # Certificado ACM deve estar na região us-east-1
+    acm_certificate_arn      = var.acm_certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+
+  ##########################################
+  # Tags padrão do projeto
+  ##########################################
+  tags = merge(var.tags, {
+    Name = "${var.project_name}-cloudfront"
+  })
+}
