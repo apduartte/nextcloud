@@ -1,56 +1,24 @@
-name: 🚀 Terraform Deploy
+# .github/workflows/test-minimal.yml
+name: Test Minimal
 
-on:
-  push:
-    branches: [ main, feature/inclusao-cloudfront ]
-  workflow_dispatch:
-    inputs:
-      action:
-        description: 'Ação Terraform'
-        required: true
-        default: 'apply'
-        type: choice
-        options:
-        - plan
-        - apply
-        - destroy
-
-env:
-  TF_IN_AUTOMATION: true
+on: [workflow_dispatch]
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  test:
     runs-on: ubuntu-latest
-
     steps:
-    - name: 📥 Checkout
-      uses: actions/checkout@v4
-
-    - name: 🔑 Configure AWS
-      uses: aws-actions/configure-aws-credentials@v4
+    - uses: actions/checkout@v4
+    
+    - name: List files
+      run: ls -la && find . -name "*.tf"
+      
+    - uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: ⚙️ Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-
-    - name: 🔍 Terraform Init
+        aws-region: us-east-1
+        
+    - uses: hashicorp/setup-terraform@v3
+        
+    - name: Terraform Init Only
       run: terraform init
-
-    - name: ✅ Terraform Validate
-      run: terraform validate
-
-    - name: 📊 Terraform Plan
-      if: github.event.inputs.action == 'plan'
-      run: terraform plan -input=false
-
-    - name: 🚀 Terraform Apply
-      if: github.event.inputs.action == 'apply'
-      run: terraform apply -auto-approve -input=false
-
-    - name: 🗑️ Terraform Destroy
-      if: github.event.inputs.action == 'destroy'
-      run: terraform destroy -auto-approve -input=false
