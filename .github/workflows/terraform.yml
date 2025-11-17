@@ -1,74 +1,45 @@
-name: Terraformar
+name: 🚀 Terraform Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/inclusao-cloudfront ]
   workflow_dispatch:
-
-permissions:
-  id-token: write
-  contents: read
+    inputs:
+      action:
+        description: 'Ação Terraform'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+        - plan
+        - apply
 
 jobs:
   terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
-    env:
-      TF_IN_AUTOMATION: "true"
-      AWS_REGION: us-east-1
-      TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
-
-    defaults:
-      run:
-        working-directory: nextcloud-aws-terraform
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          fetch-depth: 0
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
 
-      - name: Debug ref (optional)
-        run: |
-          echo "repo=${{ github.repository }}"
-          echo "ref=${{ github.ref }}"
-          echo "event=${{ github.event_name }}"
+    - name: 🔑 Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::935194211887:role/GitHubActionsTerraformRole
-          role-session-name: gha-terraform
-          aws-region: us-east-1
-          output-credentials: true
+    - name: ⚙️ Setup Terraform
+      uses: hashicorp/setup-terraform@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.7
+    - name: 🔍 Terraform Init
+      run: cd nextcloud-aws-terraform && terraform init -input=false
 
-      - name: Cache .terraform providers
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.terraform.d/plugin-cache
-            nextcloud-aws-terraform/.terraform
-          key: ${{ runner.os }}-tf-${{ hashFiles('nextcloud-aws-terraform/**/*.tf') }}
-          restore-keys: |
-            ${{ runner.os }}-tf-
+    - name: 📊 Terraform Plan
+      if: github.event.inputs.action == 'plan'
+      run: cd nextcloud-aws-terraform && terraform plan -input=false
 
-      - name: Terraform fmt (check)
-        run: terraform fmt -check -recursive
-
-      - name: Terraform init
-        run: terraform init -input=false
-
-      - name: Terraform validate
-        run: terraform validate -no-color
-
-      - name: Terraform plan
-        run: terraform plan -input=false
-
-      - name: Terraform apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
-        run: terraform apply -auto-approve -input=false
+    - name: 🚀 Terraform Apply
+      if: github.event.inputs.action == 'apply'
+      run: cd nextcloud-aws-terraform && terraform apply -auto-approve -input=false
