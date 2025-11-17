@@ -22,9 +22,11 @@ resource "aws_efs_file_system" "this" {
 ############################################
 
 resource "aws_efs_mount_target" "this" {
-  for_each = toset(module.vpc.private_subnets)
+  # um mount target por subnet privada
+  count = length(module.vpc.private_subnets)
 
-  file_system_id  = aws_efs_file_system.this.id
-  subnet_id       = each.value
+  file_system_id = aws_efs_file_system.this.id
+
+  subnet_id       = module.vpc.private_subnets[count.index]
   security_groups = [aws_security_group.efs.id]
 }
