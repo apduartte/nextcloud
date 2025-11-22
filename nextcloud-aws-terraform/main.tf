@@ -219,9 +219,9 @@ resource "null_resource" "destroy_guard" {
 #
 #  lifecycle {
 #   prevent_destroy = true
-  }
+# }
 
-  provisioner "local-exec" {
-    command = "echo 'Destruição bloqueada. Altere enable_destroy para true se tiver certeza.'"
-  }
+#  provisioner "local-exec" {
+#    command = "echo 'Destruição bloqueada. Altere enable_destroy para true se tiver certeza.'"
+#  }
 }
