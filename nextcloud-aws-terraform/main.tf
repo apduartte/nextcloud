@@ -215,10 +215,10 @@ resource "aws_backup_selection" "by_tag" {
 ############################################
 
 resource "null_resource" "destroy_guard" {
-  count = var.enable_destroy ? 0 : 1
-
-  lifecycle {
-    prevent_destroy = true
+#  count = var.enable_destroy ? 0 : 1
+#
+#  lifecycle {
+#   prevent_destroy = true
   }
 
   provisioner "local-exec" {
