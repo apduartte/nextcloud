@@ -24,7 +24,7 @@ resource "aws_lb" "this" {
 ############################################
 
 resource "aws_lb_target_group" "this" {
-  name     = "${var.project_name}-tg"
+  name     = "${var.project_name}-tg-vm"
   port     = 80
   protocol = "HTTP"
   vpc_id   = module.vpc.vpc_id
