@@ -3,7 +3,7 @@
 ############################################
 
 resource "aws_lb" "this" {
-  name               = "${var.project_name}-alb"
+  name               = "${var.project_name}-alb-vm"
   load_balancer_type = "application"
   internal           = false
 
