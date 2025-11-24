@@ -4,7 +4,7 @@
 
 # Role assumida pelas instâncias EC2 (Nextcloud)
 resource "aws_iam_role" "ec2_role" {
-  name = "${var.project_name}-ec2-role"
+  name = "${var.project_name}-ec2-role-vm"
   path = "/"
 
   assume_role_policy = jsonencode({
@@ -48,6 +48,6 @@ resource "aws_iam_role_policy_attachment" "ssm_core" {
 ############################################
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "${var.project_name}-ec2-profile"
+  name = "${var.project_name}-ec2-profile-vm"
   role = aws_iam_role.ec2_role.name
 }

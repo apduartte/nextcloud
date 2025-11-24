@@ -160,7 +160,7 @@ resource "aws_wafv2_web_acl" "cf" {
 ############################################
 
 resource "aws_backup_vault" "this" {
-  name = "${var.project_name}-backup-vault"
+  name = "${var.project_name}-backup-vault-vm"
 
   tags = merge(var.tags, {
     Name = "${var.project_name}-backup-vault"
@@ -215,13 +215,13 @@ resource "aws_backup_selection" "by_tag" {
 ############################################
 
 resource "null_resource" "destroy_guard" {
-#  count = var.enable_destroy ? 0 : 1
-#
-#  lifecycle {
-#   prevent_destroy = true
-# }
+  #  count = var.enable_destroy ? 0 : 1
+  #
+  #  lifecycle {
+  #   prevent_destroy = true
+  # }
 
-#  provisioner "local-exec" {
-#    command = "echo 'Destruição bloqueada. Altere enable_destroy para true se tiver certeza.'"
-#  }
+  #  provisioner "local-exec" {
+  #    command = "echo 'Destruição bloqueada. Altere enable_destroy para true se tiver certeza.'"
+  #  }
 }

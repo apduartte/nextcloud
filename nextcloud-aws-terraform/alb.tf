@@ -3,14 +3,15 @@
 ############################################
 
 resource "aws_lb" "this" {
-  name               = "${var.project_name}-alb-vm"
+  name = "${var.project_name}-alb-vm"
+
   load_balancer_type = "application"
   internal           = false
 
   security_groups = [aws_security_group.alb.id]
   subnets         = module.vpc.public_subnets
 
-  enable_deletion_protection       = var.enable_destroy ? false : true
+  enable_deletion_protection = false
   idle_timeout                     = 60
   enable_cross_zone_load_balancing = true
 
@@ -40,7 +41,7 @@ resource "aws_lb_target_group" "this" {
   }
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-tg"
+    Name = "${var.project_name}-tg-vm"
   })
 }
 
