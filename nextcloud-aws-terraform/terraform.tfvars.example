@@ -31,13 +31,14 @@ instance_type = "t3.small"
 
 # Nome exato da Key Pair já criada na região.
 # Deixe vazio ("") se NÃO for usar SSH (apenas SSM).
-key_name = "SUA_KEYPAIR_AQUI"
+key_name = ""
 
 ############################################
 # Banco de Dados RDS PostgreSQL
 ############################################
 
-db_username          = "nextcloud"
+db_username = "nextcloud"
+db_password = "NcCloudDb#2024"
 # ⚠ IMPORTANTE:
 # NÃO defina db_password neste arquivo de exemplo.
 # Use variável de ambiente (recomendado):

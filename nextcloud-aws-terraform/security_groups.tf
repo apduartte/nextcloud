@@ -47,7 +47,7 @@ resource "aws_security_group" "alb" {
 
 resource "aws_security_group" "ec2" {
   name        = "${var.project_name}-ec2-sg"
-  description = "Security Group das instâncias EC2 ASG Nextcloud"
+  description = "Security Group das instances EC2 ASG Nextcloud"
   vpc_id      = module.vpc.vpc_id
 
   # Recebe tráfego HTTP apenas do ALB

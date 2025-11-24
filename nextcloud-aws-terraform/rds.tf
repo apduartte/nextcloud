@@ -3,7 +3,7 @@
 ############################################
 
 resource "aws_db_subnet_group" "this" {
-  name       = "${var.project_name}-db-subnets"
+  name       = "${var.project_name}-db-subnets-vm"
   subnet_ids = module.vpc.private_subnets
 
   tags = merge(var.tags, {
@@ -16,7 +16,7 @@ resource "aws_db_subnet_group" "this" {
 ############################################
 
 resource "aws_db_instance" "this" {
-  identifier = "${var.project_name}-db"
+  identifier = "${var.project_name}-db-vm"
 
   # Engine
   engine         = "postgres"
@@ -49,6 +49,6 @@ resource "aws_db_instance" "this" {
   apply_immediately          = true
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-db"
+    Name = "${var.project_name}-db-vm"
   })
 }
