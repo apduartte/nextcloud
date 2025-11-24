@@ -145,3 +145,4 @@ Here’s what this repository demonstrates:
 - I know how to produce **clear documentation** (README, diagrams, network/security explanations) — which is essential in engineering, platform, DevOps, and SRE teams.
 
 > In short: this project shows that I can take a solution **from zero to a fully working cloud environment**, applying modern **Infrastructure as Code, AWS, and DevOps** practices, and leaving it ready to evolve in a real production scenario.
+#
