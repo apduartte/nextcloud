@@ -12,13 +12,12 @@ data "aws_ami" "al2023" {
     values = ["al2023-ami-*-x86_64"]
   }
 }
-
 ############################################
-# Locais - DNS do EFS e user_data
+# Locals - DNS do EFS e user_data
 ############################################
 
-# DNS regional do EFS baseado no ID do filesystem
 locals {
+  # DNS regional do EFS baseado no ID do filesystem
   efs_dns = "${aws_efs_file_system.this.id}.efs.${var.region}.amazonaws.com"
 
   # Renderiza o script de user_data com variáveis da app
@@ -29,12 +28,9 @@ locals {
     db_user         = var.db_username
     db_pass         = var.db_password
     trusted_domains = var.trusted_domains
+    alb_dns_name    = aws_lb.this.dns_name
   })
 }
-
-############################################
-# Launch Template - configuração das instâncias EC2
-############################################
 
 resource "aws_launch_template" "this" {
   name_prefix   = "${var.project_name}-lt-"

@@ -10,11 +10,11 @@ DB_NAME="${db_name}"
 DB_USER="${db_user}"
 DB_PASS="${db_pass}"
 TRUSTED_DOMAINS="${trusted_domains}"
+ALB_DNS_NAME="${alb_dns_name}"
 
 ############################################
 # Funções auxiliares
 ############################################
-
 log() {
   echo "[$(date -Is)] $*"
 }
@@ -24,7 +24,7 @@ is_mounted() {
 }
 
 ############################################
-# Atualização de pacotes e instalação de dependências
+# Atualização de pacotes e instalação
 ############################################
 
 if command -v dnf >/dev/null 2>&1; then
@@ -45,7 +45,7 @@ systemctl enable --now docker
 # Montagem do EFS com TLS (se possível)
 ############################################
 
-log "Montando EFS em /mnt/nextcloud"
+log "Montando EFS em /mnt/nextcloud (DNS: $EFS_DNS)"
 mkdir -p /mnt/nextcloud
 
 for i in 1 2 3 4 5; do
@@ -63,7 +63,7 @@ for i in 1 2 3 4 5; do
     break
   fi
 
-  log "Falha ao montar EFS, tentativa $i/5. Aguardando 10s..."
+  log "Falha ao montar EFS ($EFS_DNS), tentativa $i/5. Aguardando 10s..."
   sleep 10
 done
 
@@ -100,4 +100,6 @@ log "Subindo container Nextcloud"
   -e NEXTCLOUD_TRUSTED_DOMAINS="$TRUSTED_DOMAINS" \
   nextcloud:stable-apache
 
-log "User-data concluído. Após instalação, o health-check estará disponível em /status.php."
+log "User-data concluído. Após a instalação, o health-check estará disponível em /status.php."
+
+

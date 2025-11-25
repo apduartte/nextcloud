@@ -11,7 +11,7 @@ resource "aws_lb" "this" {
   security_groups = [aws_security_group.alb.id]
   subnets         = module.vpc.public_subnets
 
-  enable_deletion_protection = false
+  enable_deletion_protection       = false
   idle_timeout                     = 60
   enable_cross_zone_load_balancing = true
 
